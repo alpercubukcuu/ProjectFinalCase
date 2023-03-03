@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Core.Domain.Entities.Roles;
 using Infrastructure.Persistence.Context;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,6 +16,7 @@ namespace Core.Application.Application.Queries.UserQueries.GetUser
     {
         private readonly DatabaseContext _context;
         private readonly IMapper _mapper;
+
         public GetUsers(DatabaseContext context, IMapper mapper)
         {
             _context = context;
@@ -20,22 +24,32 @@ namespace Core.Application.Application.Queries.UserQueries.GetUser
         }
         public List<UserViewModel> Handle()
         {
-            var userList = _context.Users.Include(x => x.Role).OrderBy(x => x.Id).ToList();
-            if (userList.Count() == 0)
-                throw new InvalidOperationException("Listelenecek bir kullanıcı bulunamadı!");
+            List<UserViewModel> vm = new();
+            try
+            {
+                var userList = _context.Users.ToList();
+                if (userList.Count() == 0)
+                    throw new InvalidOperationException("Listelenecek bir kullanıcı bulunamadı!");
 
-            List<UserViewModel> vm = _mapper.Map<List<UserViewModel>>(userList);
+               vm = _mapper.Map<List<UserViewModel>>(userList);
 
-            return vm;
+                return vm;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
+         
         }
     }
 
     public class UserViewModel
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }      
-        public string? Surname { get; set; }
-        public string? Email { get; set; }
-        public string? Role { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public int RoleId { get; set; }
+      
     }
 }

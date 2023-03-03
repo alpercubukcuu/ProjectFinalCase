@@ -1,6 +1,11 @@
-﻿using Infrastructure.Persistence.Context;
+﻿using Core.Application.Enums;
+using Core.Domain.Entities.Users;
+using Infrastructure.Persistence.Context;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
-
+using MovieStoreWebApi.Chiper;
+using MovieStoreWebApi.TokenOperations;
+using MovieStoreWebApi.TokenOperations.Models;
 
 namespace Core.Application.Application.Queries.UserQueries.GetUser
 {
@@ -8,31 +13,37 @@ namespace Core.Application.Application.Queries.UserQueries.GetUser
     {
         public CreateTokenModel Model { get; set; }
         private readonly DatabaseContext _context;      
-        private readonly IConfiguration _configuration;
-        public GetUser(DatabaseContext context, IConfiguration configuration)
+        private IConfiguration _configuration;
+        private readonly IDataProtectionProvider _dataProtectionProvider;
+
+        public GetUser(DatabaseContext context, IConfiguration configuration, IDataProtectionProvider dataProtectionProvider)
         {
-            _context = context;          
+            _context = context;
             _configuration = configuration;
+            _dataProtectionProvider = dataProtectionProvider;
         }
-        public void Handle()
+        public Token Handle()
         {
-            var user = _context.Users.FirstOrDefault(x => x.Email == Model.Email && x.Password == Model.Password);
-            //if (user is not null)
-            //{
-            //    // Create Token
-            //    TokenHandler handler = new TokenHandler();
-            //    Token token = handler.CreateAccessToken(user);
+            var user = _context.Users.FirstOrDefault(x => x.Email == Model.Email);
+            string role = ((RoleEnum)user.RoleId).ToString();
 
-            //    user.RefreshToken = token.RefreshToken;
-            //    user.RefreshTokenExpireDate = token.ExpirationDate.AddMinutes(3);
-            //    _context.SaveChanges();
+            Chipers chiper = new(_dataProtectionProvider, user.Email);           
+            var decPassword = chiper.Decrypt(user.Password);
 
-            //    return token;
-            //}
-            //else
-            //{
-            //    throw new InvalidOperationException("Mail adresi hatalı!");
-            //}
+            if (Model.Password == decPassword)
+            {
+                //Create Token
+                TokenHandlers handler = new TokenHandlers(_configuration);
+                Token token = handler.CreateAccessToken(user, role);
+
+                user.RefreshToken = token.RefreshToken;
+                user.RefreshTokenExpireDate = token.Expiration.AddMinutes(3);               
+
+                return token;
+            }
+            else           
+                throw new InvalidOperationException("Kullanıcı Adı - Şifre Hatalı!");
+            
         }
     }
 
