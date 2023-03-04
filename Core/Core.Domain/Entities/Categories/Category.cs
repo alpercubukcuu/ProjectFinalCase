@@ -6,8 +6,13 @@ namespace Core.Domain.Entities.Categories
 {
     public class Category :BaseEntity
     {
-        public string Name { get; set; }
-        public IQueryable<Product> Products { get; set; }
        
+        public Category()
+        {
+            Products = new List<Product>();
+        }
+        public string Name { get; set; }
+        public List<Product> Products { get; set; }
+
     }
 }

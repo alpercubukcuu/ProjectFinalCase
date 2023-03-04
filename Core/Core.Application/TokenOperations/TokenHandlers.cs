@@ -1,11 +1,9 @@
-
 using MovieStoreWebApi.TokenOperations.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Core.Domain.Entities.Users;
-using Core.Domain.Entities.Roles;
 using System.Security.Claims;
 
 namespace MovieStoreWebApi.TokenOperations
@@ -28,6 +26,7 @@ namespace MovieStoreWebApi.TokenOperations
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),                
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, role)
             };

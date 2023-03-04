@@ -1,4 +1,6 @@
+using Core.Application.Interfaces;
 using Core.Application.Mapping;
+using Core.Application.Repository;
 using Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -58,11 +60,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
+builder.Services.AddSingleton<IHelper, Helper>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
 var app = builder.Build();
 
