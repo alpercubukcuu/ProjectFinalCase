@@ -5,14 +5,15 @@
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class mig3 : Migration
+    public partial class migShop10 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        {           
+
             migrationBuilder.AddColumn<bool>(
                 name: "Enable",
-                table: "Users",
+                table: "Shops",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
@@ -23,7 +24,8 @@ namespace Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Enable",
-                table: "Users");
+                table: "Shops");
+           
         }
     }
 }

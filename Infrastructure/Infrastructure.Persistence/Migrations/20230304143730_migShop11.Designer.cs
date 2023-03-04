@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230303125110_mig5")]
-    partial class mig5
+    [Migration("20230304143730_migShop11")]
+    partial class migShop11
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,12 +40,7 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ShopListId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ShopListId");
 
                     b.ToTable("Categories");
                 });
@@ -75,16 +70,35 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int?>("ShopListId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("ShopListId");
-
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.Projects.Project", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Roles.Role", b =>
@@ -104,7 +118,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Core.Domain.Entities.ShopList.ShopList", b =>
+            modelBuilder.Entity("Core.Domain.Entities.Shops.Shops", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,16 +132,36 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Quantity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ShopLists");
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Shops");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Users.User", b =>
@@ -176,26 +210,42 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Core.Domain.Entities.Categories.Category", b =>
-                {
-                    b.HasOne("Core.Domain.Entities.ShopList.ShopList", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("ShopListId");
-                });
-
             modelBuilder.Entity("Core.Domain.Entities.Products.Product", b =>
                 {
-                    b.HasOne("Core.Domain.Entities.Categories.Category", "category")
+                    b.HasOne("Core.Domain.Entities.Categories.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Entities.ShopList.ShopList", null)
-                        .WithMany("Products")
-                        .HasForeignKey("ShopListId");
+                    b.Navigation("Category");
+                });
 
-                    b.Navigation("category");
+            modelBuilder.Entity("Core.Domain.Entities.Shops.Shops", b =>
+                {
+                    b.HasOne("Core.Domain.Entities.Categories.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domain.Entities.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domain.Entities.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Users.User", b =>
@@ -217,13 +267,6 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Core.Domain.Entities.Roles.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Core.Domain.Entities.ShopList.ShopList", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,6 +4,7 @@ using Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230304135533_migProject")]
+    partial class migProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +118,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Core.Domain.Entities.Shops.Shops", b =>
+            modelBuilder.Entity("Core.Domain.Entities.ShopBaskets.ShopBasket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -133,9 +136,6 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Enable")
-                        .HasColumnType("bit");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -147,18 +147,13 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Shops");
+                    b.ToTable("ShopBasket");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Users.User", b =>
@@ -218,7 +213,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Core.Domain.Entities.Shops.Shops", b =>
+            modelBuilder.Entity("Core.Domain.Entities.ShopBaskets.ShopBasket", b =>
                 {
                     b.HasOne("Core.Domain.Entities.Categories.Category", "Category")
                         .WithMany()
@@ -232,17 +227,9 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Domain.Entities.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
 
                     b.Navigation("Product");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Users.User", b =>

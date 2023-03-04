@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230303140407_mig6")]
-    partial class mig6
+    [Migration("20230304141145_migShop7")]
+    partial class migShop7
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,6 +77,30 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Core.Domain.Entities.Projects.Project", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projects");
+                });
+
             modelBuilder.Entity("Core.Domain.Entities.Roles.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -92,6 +116,44 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("RoleId");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.Shops.Shops", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Num")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Shops");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Users.User", b =>
@@ -142,13 +204,32 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Core.Domain.Entities.Products.Product", b =>
                 {
-                    b.HasOne("Core.Domain.Entities.Categories.Category", "category")
+                    b.HasOne("Core.Domain.Entities.Categories.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("category");
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Core.Domain.Entities.Shops.Shops", b =>
+                {
+                    b.HasOne("Core.Domain.Entities.Categories.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domain.Entities.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Users.User", b =>
