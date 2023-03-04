@@ -28,6 +28,7 @@ namespace Presentation.Api.Controllers
 
         [HttpGet]
         [Route("/AllGetShops"), Authorize(Roles = "Admin")] // Admin için 
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]
         public IActionResult GetShops()
         {
             GetShop queries = new GetShop(_context, _mapper);
@@ -37,7 +38,8 @@ namespace Presentation.Api.Controllers
         }
 
         [HttpGet]
-        [Route("/GetMyShopList")] // Normal için 
+        [Route("/GetMyShopList")] // Normal için
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]
         public IActionResult GetMyShopList()
         {
             var identity = HttpContext.User.Identity;
@@ -52,7 +54,7 @@ namespace Presentation.Api.Controllers
         }
 
         [HttpPost]
-        [Route("/AddShop")]
+        [Route("/AddShop")]        
         public IActionResult AddShop([FromBody] ShopDto shop)
         {
             var identity = HttpContext.User.Identity;

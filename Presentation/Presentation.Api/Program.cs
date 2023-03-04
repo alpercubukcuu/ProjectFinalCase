@@ -60,6 +60,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddControllers();
+builder.Services.AddResponseCaching();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
@@ -79,6 +80,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseResponseCaching();
 
 app.UseAuthorization();
 
