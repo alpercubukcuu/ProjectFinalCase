@@ -5,6 +5,7 @@ Used in the project
 -------------------------------------------------
 Asp.Net.Core 7.0 ,
 EF Core,
+MSSQL,
 Onion Architecture ,
 AutoMapper ,
 Fluent Validation ,
