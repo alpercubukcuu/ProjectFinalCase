@@ -12,7 +12,8 @@ Fluent Validation ,
 JWT Token ,
 Claims Role ,
 Response Cache ,
-Ratelimite
+Ratelimite,
+Password Encrypte and Decrypte
 
 
 -------------------------------------------------
