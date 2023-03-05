@@ -1,8 +1,24 @@
 # ProjectFinalCase
 Param Practicum
 
-Database Relation 
+Used in the project
+-------------------------------------------------
+Asp.Net.Core 7.0 ,
+Onion Architecture ,
+AutoMapper ,
+Fluent Validation ,
+JWT Token ,
+Claims Role ,
+Response Cache ,
+Ratelimite
 
+
+-------------------------------------------------
+
+
+
+
+Database Relation 
 -------------------------------------------------
 
 
