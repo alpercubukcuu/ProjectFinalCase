@@ -8,6 +8,7 @@ using Core.Application.Interfaces;
 using Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Presentation.Api.Controllers
 {
@@ -28,7 +29,7 @@ namespace Presentation.Api.Controllers
 
         [HttpGet]
         [Route("/AllGetShops"), Authorize(Roles = "Admin")] // Admin için 
-        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]       
         public IActionResult GetShops()
         {
             GetShop queries = new GetShop(_context, _mapper);
@@ -39,7 +40,7 @@ namespace Presentation.Api.Controllers
 
         [HttpGet]
         [Route("/GetMyShopList")] // Normal için
-        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]       
         public IActionResult GetMyShopList()
         {
             var identity = HttpContext.User.Identity;
@@ -54,7 +55,8 @@ namespace Presentation.Api.Controllers
         }
 
         [HttpPost]
-        [Route("/AddShop")]        
+        [Route("/AddShop")]
+        [EnableRateLimiting("Basic")]
         public IActionResult AddShop([FromBody] ShopDto shop)
         {
             var identity = HttpContext.User.Identity;
@@ -71,6 +73,7 @@ namespace Presentation.Api.Controllers
 
         [HttpDelete]
         [Route("/DeleteShop")]
+        [EnableRateLimiting("Basic")]
         public IActionResult DeleteShop(int id)
         {
             DeleteShopCommand deleteShop = new DeleteShopCommand(_context);
@@ -81,6 +84,7 @@ namespace Presentation.Api.Controllers
 
         [HttpPut]
         [Route("/UpdateShop")]
+        [EnableRateLimiting("Basic")]
         public IActionResult UpdateShop([FromBody] ShopDto shop , [FromQuery]int id)
         {
             UpdateShopCommand updateShop = new UpdateShopCommand(_context);

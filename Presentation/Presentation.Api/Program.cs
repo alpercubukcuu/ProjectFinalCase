@@ -3,10 +3,12 @@ using Core.Application.Mapping;
 using Core.Application.Repository;
 using Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +59,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ClockSkew = TimeSpan.Zero
     };
 });
+
+builder.Services.AddRateLimiter(option => option
+            .AddFixedWindowLimiter(policyName: "Basic", options =>
+            {
+                options.PermitLimit = 1;
+                // Only allow 1 request every 10 seconds
+                options.Window = TimeSpan.FromSeconds(10);
+                options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                // Only queue 3 requests when we go over that limit
+                options.QueueLimit = 3;
+            }));
 
 builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddControllers();
