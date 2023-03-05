@@ -1,5 +1,5 @@
 # ProjectFinalCase
-Param Practicum
+Param Practicum Final Case
 
 Used in the project
 -------------------------------------------------
