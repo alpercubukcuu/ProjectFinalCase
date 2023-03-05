@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ShopsController : ControllerBase
