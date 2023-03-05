@@ -4,6 +4,7 @@ Param Practicum Final Case
 Used in the project
 -------------------------------------------------
 Asp.Net.Core 7.0 ,
+EF Core,
 Onion Architecture ,
 AutoMapper ,
 Fluent Validation ,
